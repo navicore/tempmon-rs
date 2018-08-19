@@ -1,0 +1,22 @@
+language: rust
+rust:
+  - stable
+
+script:
+  ## This runs the template with the default parameters, and runs test within the templated app.
+  - cargo test
+  - docker build -t navicore/tempmon-rs .
+
+sudo: required
+
+services:
+  - docker
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    docker push navicore/tempmon-rs;
+    docker tag "navicore/tempmon-rs" "navicore/tempmon-rs:0.1.$TRAVIS_BUILD_NUMBER";
+    docker push "navicore/tempmon-rs:0.1.$TRAVIS_BUILD_NUMBER";
+    fi
+

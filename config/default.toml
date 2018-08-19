@@ -1,0 +1,9 @@
+out_topic = "heartbeat"
+heartbeat_template = "temp from"
+delay_seconds = 30
+
+[out_client]
+url = "localhost:1883"
+username = "admin"
+password = "admin"
+tls = false
