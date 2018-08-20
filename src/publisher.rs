@@ -48,9 +48,10 @@ impl Handler<Report> for Publisher {
     type Result = String; // <- Message response type
 
     fn handle(&mut self, msg: Report, _ctx: &mut Context<Self>) -> Self::Result {
-        self.client
-            .publish(self.topic.clone(), msg.json, PubOpt::at_least_once())
-            .ok();
+        // self.client
+        //     .publish(self.topic.clone(), msg.json, PubOpt::at_least_once())
+        //     .ok();
+        println!("{} --> {}", "fake publish!", msg.json);
 
         String::from("ok")
     }

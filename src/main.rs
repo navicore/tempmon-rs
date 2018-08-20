@@ -32,6 +32,7 @@ fn beat(addr: Recipient<Beat>) {
 }
 
 fn main() {
+    println!("init app")
     let settings = Settings::new().unwrap();
     let out_client = settings.out_client;
     let out_topic = settings.out_topic;

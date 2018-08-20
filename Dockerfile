@@ -6,8 +6,10 @@ ARG rust_revision="1.28.0"
 ################################################################################
 # Base image
 ################################################################################
+FROM resin/armv7hf-debian as base
 
-FROM debian as base
+# use this in the arm6l vs arm7l vs arm8l issue below
+RUN echo "arch is armv7hf"
 
 ENV INITSYSTEM=on
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,15 +21,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 FROM base as rust
 
 # Install build tools
-RUN apt-get -q update && apt-get install -yq --no-install-recommends sudo ca-certificates build-essential curl file pkg-config libssl-dev openssl autoconf bison gzip libreadline-dev patch sed zlib1g-dev
+RUN apt-get -q update && apt-get install -yq --no-install-recommends build-essential curl file pkg-config libssl-dev git
+
 ENV PATH=/root/.cargo/bin:$PATH
 
-RUN mkdir -p /build/openssl && curl -s https://www.openssl.org/source/openssl-1.0.2l.tar.gz | tar -C /build/openssl -xzf - && \
-    cd /build/openssl/openssl-1.0.2l && \
-    ./Configure \
-      --openssldir=/opt/openssl/openssl-1.0.2 \
-      shared linux-x86_64 && \
-    make && make install_sw
+RUN cp `which uname` /bin/uname-orig && echo '#!/bin/bash\nif [[ $1 == "-m" ]]; then if [[ "%%RESIN_MACHINE_NAME%%" == "raspberry-pi" ]]; then echo "armv6l"; else echo "armv7l"; fi; else /bin/uname-orig $@; fi;' > `which uname`
 
 # Install specific version of Rust (see ARG)
 RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --revision=${rust_revision}
@@ -37,16 +35,12 @@ RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --revision=${
 ################################################################################
 
 FROM rust as builder
-
-ENV OPENSSL_INCLUDE_DIR=/opt/openssl/openssl-1.0.2/include
-ENV OPENSSL_LIB_DIR=/opt/openssl/openssl-1.0.2/lib
-ENV OPENSSL_STATIC=yes
-
-COPY . /build/app
+ENV OPENSSL_DIR=/usr
 
 # Build real app
+COPY . /build/app
 WORKDIR /build/app
-RUN cargo build --release
+RUN  cargo build --release
 
 ################################################################################
 # Final image
