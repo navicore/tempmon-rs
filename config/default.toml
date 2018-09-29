@@ -1,5 +1,5 @@
-out_topic = "heartbeat"
-heartbeat_template = "temp from"
+out_topic = "temperature"
+tempmon_template = "temp from"
 delay_seconds = 30
 
 [out_client]
