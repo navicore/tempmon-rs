@@ -23,6 +23,10 @@ fn node_name() -> String {
     }
 }
 
+fn temp() -> i32 {
+    40
+}
+
 pub struct TempMon {
     pub publisher: Recipient<Report>,
 }
@@ -45,9 +49,10 @@ impl Handler<MonitorCmd> for TempMon {
     fn handle(&mut self, _msg: MonitorCmd, _ctx: &mut Context<Self>) -> Self::Result {
         let settings = Settings::new().unwrap();
         let json = format!(
-            r#"{{"tempmon": "{} {}"}}"#,
+            r#"{{"tempmon": "{} {} is {}"}}"#,
             settings.tempmon_template,
-            node_name()
+            node_name(),
+            temp()
         );
         let res = self.publisher.send(Report { json });
         Arbiter::spawn(res.then(|res| {
