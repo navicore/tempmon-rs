@@ -1,11 +1,11 @@
-#[macro_use]
-extern crate serde_derive;
 extern crate actix;
 extern crate config;
 extern crate futures;
 extern crate mqttc;
+extern crate mraa;
 extern crate netopt;
 extern crate serde;
+extern crate serde_derive;
 extern crate ws;
 use actix::*;
 use publisher::new_client;
@@ -29,10 +29,12 @@ fn main() {
     let p_actor = Publisher {
         client: new_client(out_client),
         topic: out_topic,
-    }.start();
+    }
+    .start();
     let h_actor = TempMon {
         publisher: p_actor.recipient(),
-    }.start();
+    }
+    .start();
 
     thread::spawn(move || loop {
         thread::sleep(Duration::from_secs(delay_seconds));

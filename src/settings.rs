@@ -1,5 +1,5 @@
-extern crate serde;
 use config::{Config, ConfigError, Environment, File};
+use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Mqtt {

@@ -1,15 +1,15 @@
-################################################################################
-# Arguments
-################################################################################
-ARG rust_revision="1.28.0"
-
+#
+# just to test compile w/ mraa libs - all deployments are via resin multi-container yml files
+#
 ################################################################################
 # Base image
 ################################################################################
-FROM resin/armv7hf-debian as base
+#FROM resin/armv7hf-debian as base
+#FROM resin/i386-debian as base
+FROM resin/intel-edison-debian as base
 
 # use this in the arm6l vs arm7l vs arm8l issue below
-RUN echo "arch is armv7hf"
+#RUN echo "arch is armv7hf"
 
 ENV INITSYSTEM=on
 ENV DEBIAN_FRONTEND=noninteractive
@@ -25,10 +25,10 @@ RUN apt-get -q update && apt-get install -yq --no-install-recommends build-essen
 
 ENV PATH=/root/.cargo/bin:$PATH
 
-RUN cp `which uname` /bin/uname-orig && echo '#!/bin/bash\nif [[ $1 == "-m" ]]; then if [[ "%%RESIN_MACHINE_NAME%%" == "raspberry-pi" ]]; then echo "armv6l"; else echo "armv7l"; fi; else /bin/uname-orig $@; fi;' > `which uname`
+#RUN cp `which uname` /bin/uname-orig && echo '#!/bin/bash\nif [[ $1 == "-m" ]]; then if [[ "%%RESIN_MACHINE_NAME%%" == "raspberry-pi" ]]; then echo "armv6l"; else echo "armv7l"; fi; else /bin/uname-orig $@; fi;' > `which uname`
 
 # Install specific version of Rust (see ARG)
-RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --revision=${rust_revision}
+RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh -s -- -y --revision=nightly
 
 ################################################################################
 # Builder

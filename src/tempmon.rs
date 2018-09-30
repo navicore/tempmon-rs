@@ -4,6 +4,8 @@ use publisher::Report;
 use settings::Settings;
 use std::env;
 
+use mraa::bindings::aio::*;
+
 pub fn monitor(addr: Recipient<MonitorCmd>) {
     let res = addr.send(MonitorCmd());
     Arbiter::spawn(res.then(|res| {
@@ -24,6 +26,21 @@ fn node_name() -> String {
 }
 
 fn temp() -> i32 {
+    let adc_a0: mraa_aio_context = unsafe { mraa_aio_init(0) };
+    if adc_a0.is_null() {
+        panic!("Failed to initialise aio context.");
+    }
+
+    //loop {
+    let adc_value: u32 = unsafe { mraa_aio_read(adc_a0) };
+    let adc_value_float: f32 = unsafe { mraa_aio_read_float(adc_a0) };
+
+    println!("ADC A0 read {}", adc_value);
+    println!("ADC A0 read float - {:.5}", adc_value_float);
+    //}
+
+    unsafe { mraa_aio_close(adc_a0) };
+
     40
 }
 
