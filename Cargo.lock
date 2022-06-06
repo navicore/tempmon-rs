@@ -1314,9 +1314,9 @@ dependencies = [
 
 [[package]]
 name = "trust-dns-proto"
-version = "0.4.0"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "32d7c204ee231f802aa821f9dc2195aa0d0269ef7e9f8c844208565c9e3981e4"
+checksum = "f1525ca4e26f5a09d81b79584f19225e7dba5606ae3a416311c2751c5cea60bb"
 dependencies = [
  "byteorder 1.2.6",
  "error-chain 0.1.12",
